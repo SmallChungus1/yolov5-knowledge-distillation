@@ -190,8 +190,22 @@ class ComputeLoss:
         lobj *= self.hyp['obj']
         lcls *= self.hyp['cls']
         bs = tobj.shape[0]  # batch size
+        
+        ###HL addition: adjusting weight of imitation loss based on teacher prediction accuracy
+        # if teacher is not None and student  is not None:
+        #     teacher_accuracy = compute_teacher_accuracy(teacher, targets)
 
-        lmask = imitation_loss(teacher, student, mask) * 0.5
+        #     if teacher_accuracy < 0.6:
+        #         self.imitation_loss_weight = 0.005
+        #     else:
+        #         self.imitation_loss_weight = 0.01
+        
+        lmask = imitation_loss(teacher, student, mask) * 0.005
+        ###End HL
+
+        ###original imitation loss portion
+        # lmask = imitation_loss(teacher, student, mask) * 0.01
+        ###
 
         return (lbox + lobj + lcls + lmask) * bs, torch.cat((lbox, lobj, lcls)).detach()
 
