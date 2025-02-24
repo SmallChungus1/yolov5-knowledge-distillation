@@ -99,7 +99,7 @@ def imitation_loss(teacher, student, mask):
     student = student.to(device)
     mask = mask.to(device)
     ###
-    
+
     # print(teacher.shape, student.shape, mask.shape)
     diff = torch.pow(student - teacher, 2) * mask
     diff = diff.sum() / mask.sum() / 2
@@ -191,7 +191,7 @@ class ComputeLoss:
         lcls *= self.hyp['cls']
         bs = tobj.shape[0]  # batch size
 
-        lmask = imitation_loss(teacher, student, mask) * 0.01
+        lmask = imitation_loss(teacher, student, mask) * 0.5
 
         return (lbox + lobj + lcls + lmask) * bs, torch.cat((lbox, lobj, lcls)).detach()
 
