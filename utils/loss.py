@@ -91,6 +91,15 @@ class QFocalLoss(nn.Module):
 def imitation_loss(teacher, student, mask):
     if student is None or teacher is None:
         return 0
+
+    ###HL addition: making teacher and student use same device to prevent "RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!"
+    # Ensure all tensors are on the same device (e.g., CUDA)
+    device = teacher.device  # Or student.device, as they should be on the same device
+    teacher = teacher.to(device)
+    student = student.to(device)
+    mask = mask.to(device)
+    ###
+    
     # print(teacher.shape, student.shape, mask.shape)
     diff = torch.pow(student - teacher, 2) * mask
     diff = diff.sum() / mask.sum() / 2
